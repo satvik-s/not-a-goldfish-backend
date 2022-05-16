@@ -1,7 +1,8 @@
 deploy:
-	rm -rf dist
+	rm -rf dist*
 	rm -rf cdk.out
-	nvm use
-	npm run build
-	npm run synth
-	npm run deploy
+	npm run build-create-function
+	npm run build-retrieve-function
+	cdk bootstrap
+	cdk synth
+	cdk deploy

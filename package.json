@@ -1,11 +1,14 @@
 {
-  "name": "hello-world-lambda",
+  "name": "not-a-goldfish",
   "version": "0.1.0",
   "bin": {
-    "hello-world-lambda": "bin/hello-world-lambda.js"
+    "not-a-goldfish": "bin/not-a-goldfish.js"
   },
   "scripts": {
-    "build": "$(npm bin)/tsc",
+    "build-create-function": "$(npm bin)/tsc --project tsconfig.create-function.json",
+    "build-retrieve-function": "$(npm bin)/tsc --project tsconfig.retrieve-function.json",
+    "postbuild-create-function": "cp package.json dist-create-function/package.json && cd dist-create-function && npm install --only=production",
+    "postbuild-retrieve-function": "cp package.json dist-retrieve-function/package.json && cd dist-retrieve-function && npm install --only=production",
     "watch": "$(npm bin)/tsc -w",
     "test": "$(npm bin)/jest",
     "cdk": "cdk",
@@ -20,7 +23,7 @@
     "@types/node": "17.0.33",
     "@typescript-eslint/eslint-plugin": "5.23.0",
     "@typescript-eslint/parser": "5.23.0",
-    "aws-cdk": "2.22.0",
+    "aws-cdk": "2.24.1",
     "aws-cdk-lib": "2.24.1",
     "constructs": "10.1.7",
     "eslint": "8.15.0",
@@ -32,7 +35,7 @@
     "husky": "8.0.1",
     "jest": "28.1.0",
     "lint-staged": "12.4.1",
-    "npm-check-updates": "12.5.11",
+    "npm-check-updates": "13.0.0",
     "prettier": "2.6.2",
     "source-map-support": "0.5.21",
     "ts-jest": "28.0.2",
@@ -41,5 +44,9 @@
   },
   "lint-staged": {
     "*.{js,ts}": "npm run prettier"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "3.87.0",
+    "@aws-sdk/util-dynamodb": "3.87.0"
   }
 }
