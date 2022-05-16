@@ -36,7 +36,11 @@ export async function main(event: {
 
     return {
         body: JSON.stringify((items ?? []).map((item) => unmarshall(item).url)),
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control':
+                'public, max-age=600, s-maxage=600, stale-while-revalidate=300',
+        },
         statusCode: 200,
     };
 }
