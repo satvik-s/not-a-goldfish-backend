@@ -1,4 +1,4 @@
 dist/
 node_modules/
-**/*.json
+package-lock.json
 cdk.out/
