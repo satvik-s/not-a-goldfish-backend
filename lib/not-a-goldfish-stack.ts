@@ -11,7 +11,7 @@ import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
 import * as path from 'path';
 
-export class HelloWorldLambdaStack extends Stack {
+export class NotAGoldfishStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
 
@@ -26,10 +26,11 @@ export class HelloWorldLambdaStack extends Stack {
                 type: AttributeType.STRING,
             },
             sortKey: {
-                name: 'timestamp',
-                type: AttributeType.NUMBER,
+                name: 'url_id',
+                type: AttributeType.STRING,
             },
             billingMode: BillingMode.PROVISIONED,
+            timeToLiveAttribute: 'expire_at',
         });
 
         const createLambdaFn = new Function(
@@ -65,7 +66,7 @@ export class HelloWorldLambdaStack extends Stack {
             },
         });
 
-        table.grantReadWriteData(createLambdaFn);
+        table.grantWriteData(createLambdaFn);
 
         const retrieveLambdaFn = new Function(
             this,
@@ -101,5 +102,40 @@ export class HelloWorldLambdaStack extends Stack {
         });
 
         table.grantReadData(retrieveLambdaFn);
+
+        const deleteLambdaFn = new Function(
+            this,
+            'not-a-goldfish-delete-function',
+            {
+                code: Code.fromAsset(
+                    path.join(__dirname, '/../dist-delete-function'),
+                ),
+                handler: 'delete-handler.main',
+                runtime: Runtime.NODEJS_14_X,
+
+                description: 'not a goldfish delete function',
+                timeout: Duration.seconds(1),
+                functionName: 'not-a-goldfish-delete-function',
+                memorySize: 128,
+                logRetention: RetentionDays.THREE_DAYS,
+                currentVersionOptions: {
+                    removalPolicy: RemovalPolicy.DESTROY,
+                },
+                environment: {
+                    TABLE_AWS_REGION: process.env.AWS_DEFAULT_REGION ?? '',
+                },
+            },
+        );
+
+        deleteLambdaFn.addFunctionUrl({
+            authType: FunctionUrlAuthType.NONE,
+            cors: {
+                allowedMethods: [HttpMethod.DELETE],
+                allowedOrigins: ['*'],
+                maxAge: Duration.minutes(1),
+            },
+        });
+
+        table.grantWriteData(deleteLambdaFn);
     }
 }

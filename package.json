@@ -6,8 +6,10 @@
   },
   "scripts": {
     "build-create-function": "$(npm bin)/tsc --project tsconfig.create-function.json",
+    "build-delete-function": "$(npm bin)/tsc --project tsconfig.delete-function.json",
     "build-retrieve-function": "$(npm bin)/tsc --project tsconfig.retrieve-function.json",
     "postbuild-create-function": "cp package.json dist-create-function/package.json && cd dist-create-function && npm install --only=production",
+    "postbuild-delete-function": "cp package.json dist-delete-function/package.json && cd dist-delete-function && npm install --only=production",
     "postbuild-retrieve-function": "cp package.json dist-retrieve-function/package.json && cd dist-retrieve-function && npm install --only=production",
     "watch": "$(npm bin)/tsc -w",
     "cdk": "cdk",

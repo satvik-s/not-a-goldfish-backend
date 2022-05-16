@@ -1,5 +1,5 @@
 import { QueryCommand } from '@aws-sdk/client-dynamodb';
-import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
+import { unmarshall } from '@aws-sdk/util-dynamodb';
 
 import { getDynamoClientAndTable } from './utils/dynamo';
 
@@ -18,14 +18,10 @@ export async function main(event: {
 
     const queryItemCommand = new QueryCommand({
         TableName: tableName,
-        KeyConditions: {
-            user_id: {
-                ComparisonOperator: 'EQ',
-                AttributeValueList: [
-                    marshall({ user_id: event.queryStringParameters.user_id })[
-                        'user_id'
-                    ],
-                ],
+        KeyConditionExpression: 'user_id = :user',
+        ExpressionAttributeValues: {
+            ':user': {
+                S: event.queryStringParameters.user_id,
             },
         },
         ReturnConsumedCapacity: 'TOTAL',
@@ -35,7 +31,15 @@ export async function main(event: {
     const items = queryItemOutput.Items;
 
     return {
-        body: JSON.stringify((items ?? []).map((item) => unmarshall(item).url)),
+        body: JSON.stringify(
+            (items ?? []).map((item) => {
+                const unmarshalledItem = unmarshall(item);
+                return {
+                    id: unmarshalledItem.url_id,
+                    url: unmarshalledItem.url,
+                };
+            }),
+        ),
         headers: {
             'Content-Type': 'application/json',
             'Cache-Control':
