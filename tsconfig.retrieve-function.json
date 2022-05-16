@@ -18,7 +18,8 @@
     "experimentalDecorators": false,
     "strictPropertyInitialization": false,
     "typeRoots": ["./node_modules/@types"],
-    "outDir": "dist-retrieve-function"
+    "outDir": "dist-retrieve-function",
+    "useUnknownInCatchVariables": false
   },
   "include": ["src/retrieve-handler.ts"],
   "exclude": ["node_modules", "cdk.out", "test"]
