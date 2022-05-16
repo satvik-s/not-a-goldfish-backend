@@ -1,7 +1,10 @@
 import { PutItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
+import { randomUUID } from 'crypto';
 
 import { getDynamoClientAndTable } from './utils/dynamo';
+
+const ONE_MONTH_SECONDS = 2_628_000;
 
 export async function main(event: { body?: string }) {
     const body = JSON.parse(event.body ?? '{}');
@@ -15,9 +18,12 @@ export async function main(event: { body?: string }) {
 
     const [client, tableName] = getDynamoClientAndTable();
 
+    const currentTimestamp = Math.floor(Date.now() / 1000);
     const record = {
+        expire_at: currentTimestamp + 6 * ONE_MONTH_SECONDS,
+        last_modified_at: currentTimestamp,
         user_id: body.user_id,
-        timestamp: Date.now(),
+        url_id: randomUUID(),
         url: body.url,
     };
 
