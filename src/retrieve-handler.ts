@@ -34,13 +34,16 @@ export async function main(event: {
 
         return {
             body: JSON.stringify(
-                (items ?? []).map((item) => {
-                    const unmarshalledItem = unmarshall(item);
-                    return {
-                        id: unmarshalledItem.url_id,
-                        url: unmarshalledItem.url,
-                    };
-                }),
+                (items ?? [])
+                    .map((item) => {
+                        const unmarshalledItem = unmarshall(item);
+                        return {
+                            id: unmarshalledItem.url_id,
+                            url: unmarshalledItem.url,
+                            last_modified_at: unmarshalledItem.last_modified_at,
+                        };
+                    })
+                    .sort((a, b) => b.last_modified_at - a.last_modified_at),
             ),
             headers: {
                 'Content-Type': 'application/json',

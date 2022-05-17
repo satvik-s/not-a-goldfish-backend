@@ -38,6 +38,7 @@ export async function main(event: { body?: string }) {
         console.info(putItemOutput);
 
         return {
+            body: JSON.stringify(record),
             headers: { 'Content-Type': 'application/json' },
             statusCode: 200,
         };
